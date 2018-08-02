@@ -31,7 +31,7 @@
 *********************************************************************************************************
 */
 #if 1
-	#define printf_debug printf
+	#define printf_debug SEGGER_RTT_printf
 #else
 	#define printf_debug(...)
 #endif
@@ -84,7 +84,7 @@ U16 tcp_callback (U8 soc, U8 evt, U8 *ptr, U16 par)
 		*/
 		case TCP_EVT_CONREQ:
 			sprintf(buf, "远程客户端请求连接IP: %d.%d.%d.%d", ptr[0], ptr[1], ptr[2], ptr[3]);
-			printf_debug("IP:%s  port:%d\r\n", buf, par);
+			printf_debug(0,"IP:%s  port:%d\r\n", buf, par);
 			return (1);
 		
 		/* 连接终止 */
@@ -93,12 +93,12 @@ U16 tcp_callback (U8 soc, U8 evt, U8 *ptr, U16 par)
 		
 		/* Socket远程连接已经建立 */
 		case TCP_EVT_CONNECT:
-			printf_debug("Socket is connected to remote peer\r\n");
+			printf_debug(0,"Socket is connected to remote peer\r\n");
 			break;
 		
 		/* 连接断开 */
 		case TCP_EVT_CLOSE:
-		   	printf_debug("Connection has been closed\r\n");
+		   	printf_debug(0,"Connection has been closed\r\n");
 			break;
 		
 		/* 发送的数据收到远程设备应答 */
@@ -107,10 +107,10 @@ U16 tcp_callback (U8 soc, U8 evt, U8 *ptr, U16 par)
 		
 		/* 接收到TCP数据帧，ptr指向数据地址，par记录数据长度，单位字节 */
 		case TCP_EVT_DATA:
-			printf_debug("Data length = %d\r\n", par);
+			printf_debug(0,"Data length = %d\r\n", par);
 			for(i = 0; i < par; i++)
 			{
-				printf_debug("ptr[%d] = %d\r\n", i, ptr[i]);
+				printf_debug(0,"ptr[%d] = %d\r\n", i, ptr[i]);
 			}
 			break;
 	}
@@ -136,7 +136,7 @@ uint8_t TCP_StatusCheck(void)
 		case TCP_STATE_FREE:
 		case TCP_STATE_CLOSED:
 			res = tcp_listen (socket_tcp, PORT_NUM);
-			printf_debug("tcp listen res = %d\r\n", res);
+			printf_debug(0,"tcp listen res = %d\r\n", res);
 			break;
 		
 		case TCP_STATE_LISTEN:
@@ -178,7 +178,7 @@ void TCPnetTest(void)
 	if(socket_tcp != 0)
 	{
 		res = tcp_listen (socket_tcp, PORT_NUM);
-		printf_debug("tcp listen res = %d\r\n", res);
+		printf_debug(0,"tcp listen res = %d\r\n", res);
 	}
 	
 	while (1) 
@@ -197,7 +197,7 @@ void TCPnetTest(void)
 			{
 				/* 接收到K1键按下，给远程TCP客户端发送8字节数据 */
 				case KEY1_BIT0:			  
-					printf_debug("tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
+					printf_debug(0,"tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
 					iCount = 8;
 					do
 					{
@@ -232,7 +232,7 @@ void TCPnetTest(void)
 
 				/* 接收到K2键按下，给远程TCP客户端发送1024字节的数据 */
 				case KEY2_BIT1:		
-					printf_debug("tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
+					printf_debug(0,"tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
 					iCount = 1024;
 					do
 					{
@@ -268,7 +268,7 @@ void TCPnetTest(void)
 					
 				/* 接收到K3键按下，给远程TCP客户端发送5MB数据 */
 				case KEY3_BIT2:			  
-					printf_debug("tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
+					printf_debug(0,"tcp_get_state(socket_tcp) = %d\r\n", tcp_get_state(socket_tcp));
 					iCount = 5*1024*1024;
 					do
 					{
